@@ -5,6 +5,9 @@ const routes = require('./routes');
 const app = express();
 app.use(express.json());
 
+// Documentação Swagger
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs)); 
+
 // Inicializar banco de dados
 const db = Database.getInstance();
 
