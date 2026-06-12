@@ -1,5 +1,5 @@
 const { Sequelize } = require('sequelize');
-require('dotenv').config();
+require('dotenv').config({ quiet: true });
 
 class Database {
     static instance = null;
@@ -18,7 +18,7 @@ class Database {
             process.env.DB_PASSWORD,
             {
                 host: process.env.DB_HOST,
-                port: process.env.DB_PORT,
+                port: Number(process.env.DB_PORT) || 3306,
                 dialect: 'mysql',
                 logging: false, // Mude para console.log para ver as queries
                 pool: {
