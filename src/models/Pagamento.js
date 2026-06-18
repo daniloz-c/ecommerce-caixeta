@@ -15,11 +15,11 @@ const Pagamento = sequelize.define('Pagamento', {
     allowNull: false
   },
   tipo: {
-    type: DataTypes.ENUM('cartao_credito', 'pix', 'boleto'),
+    type: DataTypes.ENUM('cartao_credito', 'pix', 'boleto', 'gateway_legado'),
     allowNull: false
   },
   status: {
-    type: DataTypes.ENUM('pendente', 'aprovado', 'recusado', 'cancelado'),
+    type: DataTypes.ENUM('pendente', 'aprovado', 'recusado', 'cancelado', 'pendente_confirmacao', 'emitido'),
     defaultValue: 'pendente'
   },
   valor: {

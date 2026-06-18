@@ -2,6 +2,7 @@ const Pedido = require('../models/Pedido');
 const ItemPedido = require('../models/ItemPedido');
 const Pagamento = require('../models/Pagamento');
 const { PedidoBuilderHelper } = require('../patterns/PedidoBuilder');
+const CheckoutFacade = require('../patterns/CheckoutFacade');
 
 class PedidoController {
   static async listarTodos(req, res) {
@@ -97,10 +98,13 @@ class PedidoController {
 
       // Finalizar pedido
       const pedidoFinal = await builder.finalizarPedido();
+      const checkoutFacade = new CheckoutFacade();
+      const checkout = await checkoutFacade.finalizar(pedidoFinal);
 
       res.status(201).json({
         mensagem: 'Pedido criado com sucesso',
-        dados: pedidoFinal
+        dados: pedidoFinal,
+        checkout
       });
     } catch (erro) {
       res.status(400).json({ erro: erro.message });

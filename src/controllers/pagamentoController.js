@@ -1,6 +1,7 @@
 const Pagamento = require('../models/Pagamento');
 const Pedido = require('../models/Pedido');
 const { PagamentoFactory } = require('../patterns/PagamentoFactory');
+const { aplicarDecoradores } = require('../patterns/PagamentoDecorators');
 
 class PagamentoController {
   static async listarTodos(req, res) {
@@ -62,7 +63,7 @@ class PagamentoController {
   static async processar(req, res) {
     try {
       const { pedidoId } = req.params;
-      const { tipo, dados } = req.body;
+      const { tipo, dados = {}, decoradores = {} } = req.body;
 
       // Buscar pedido
       const pedido = await Pedido.findByPk(pedidoId);
@@ -81,7 +82,7 @@ class PagamentoController {
       }
 
       // Validar tipo
-      const tiposValidos = ['cartao_credito', 'pix', 'boleto'];
+      const tiposValidos = ['cartao_credito', 'pix', 'boleto', 'gateway_legado'];
       if (!tiposValidos.includes(tipo)) {
         return res.status(400).json({
           erro: `Tipo de pagamento inválido. Valores aceitos: ${tiposValidos.join(', ')}`
@@ -90,7 +91,16 @@ class PagamentoController {
 
       // Usar Factory para criar o pagamento
       try {
-        const pagamentoObj = PagamentoFactory.criarPagamento(tipo, pagamento.valor, dados);
+        const descontoPercentual = Number(
+          decoradores.descontoPercentual || dados.descontoPercentual || 0
+        );
+        const pagamentoObj = aplicarDecoradores(
+          PagamentoFactory.criarPagamento(tipo, pagamento.valor, dados),
+          {
+            descontoPercentual,
+            log: Boolean(decoradores.log || dados.log)
+          }
+        );
         const resultado = pagamentoObj.processar();
 
         // Atualizar status
@@ -101,9 +111,12 @@ class PagamentoController {
           statusNovo = 'pendente_confirmacao';
         } else if (tipo === 'boleto') {
           statusNovo = 'emitido';
+        } else if (tipo === 'gateway_legado' && resultado.sucesso) {
+          statusNovo = 'aprovado';
         }
 
         await pagamento.update({
+          valor: resultado.valor_cobrado || pagamento.valor,
           status: statusNovo,
           transacao_id: resultado.transacao_id || Math.random().toString(36).substr(2, 9)
         });

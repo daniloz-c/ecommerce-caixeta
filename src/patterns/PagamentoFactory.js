@@ -97,8 +97,51 @@ class Boleto extends Pagamento {
   }
 }
 
+class GatewayLegado {
+  cobrar(valorEmCentavos, referenciaExterna) {
+    return {
+      aprovado: true,
+      codigoTransacao: `LEG-${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
+      descricao: `Pagamento legado aprovado para a referencia ${referenciaExterna}`,
+      valorProcessado: valorEmCentavos
+    };
+  }
+}
+
+class GatewayAdapter extends Pagamento {
+  constructor(valor, gatewayLegado, referenciaExterna) {
+    super(valor);
+    this.tipo = 'gateway_legado';
+    this.gatewayLegado = gatewayLegado;
+    this.referenciaExterna = referenciaExterna;
+  }
+
+  processar() {
+    const valorEmCentavos = Math.round(Number(this.valor) * 100);
+    const respostaLegada = this.gatewayLegado.cobrar(valorEmCentavos, this.referenciaExterna);
+
+    this.status = respostaLegada.aprovado ? 'aprovado' : 'recusado';
+
+    return {
+      sucesso: respostaLegada.aprovado,
+      mensagem: respostaLegada.descricao,
+      transacao_id: respostaLegada.codigoTransacao,
+      resposta_legada: respostaLegada
+    };
+  }
+
+  getDetalhes() {
+    return {
+      tipo: this.tipo,
+      valor: this.valor,
+      status: this.status,
+      referenciaExterna: this.referenciaExterna
+    };
+  }
+}
+
 class PagamentoFactory {
-  static criarPagamento(tipo, valor, dados) {
+  static criarPagamento(tipo, valor, dados = {}) {
     switch (tipo.toLowerCase()) {
       case 'cartao_credito':
         return new CartaoCredito(valor, dados.numeroCartao, dados.cvv, dados.validade);
@@ -106,10 +149,16 @@ class PagamentoFactory {
         return new PIX(valor, dados.chavePixRecebedor);
       case 'boleto':
         return new Boleto(valor, dados.cnpjBeneficiario);
+      case 'gateway_legado':
+        return new GatewayAdapter(
+          valor,
+          new GatewayLegado(),
+          dados.referenciaExterna || dados.clienteId || 'pedido-sem-referencia'
+        );
       default:
         throw new Error(`Tipo de pagamento inválido: ${tipo}`);
     }
   }
 }
 
-module.exports = { PagamentoFactory, CartaoCredito, PIX, Boleto };
+module.exports = { Pagamento, PagamentoFactory, CartaoCredito, PIX, Boleto, GatewayLegado, GatewayAdapter };
