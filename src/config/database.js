@@ -1,3 +1,7 @@
+//Garante uma única instância de recursos globais da aplicação, como conexão com banco de dados, 
+//serviço de logs, configurações da API ou cliente de mensageria. 
+// Isso evita múltiplas conexões desnecessárias e ajuda a controlar melhor recursos compartilhados.
+
 const { Sequelize } = require('sequelize');
 require('dotenv').config({ quiet: true });
 

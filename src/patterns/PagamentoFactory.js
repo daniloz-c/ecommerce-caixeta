@@ -1,3 +1,10 @@
+// Adapter: Ajuda a criar diferentes tipos de pagamento sem espalhar if/else pelo código. 
+// Por exemplo, a API pode receber cartao_credito, pix, boleto ou gateway_legado, 
+// e a Factory decide qual classe de pagamento deve ser criada.
+// Factory: Centraliza a criação de objetos de pagamento, permitindo que o código do controller
+// fique mais limpo e focado na lógica de negócios, delegando a criação dos objetos para a Factory. 
+// O controller só precisa chamar PagamentoFactory.criarPagamento(tipo, valor, dados) e receber um objeto de pagamento pronto para processar.
+
 class Pagamento {
   constructor(valor) {
     this.valor = valor;

@@ -1,3 +1,6 @@
+// É ideal para o cálculo de frete, pois existem diferentes regras: Correios, Jadlog e Retirada. 
+// Cada estratégia implementa uma forma de cálculo, e a API pode trocar o método de frete sem alterar a lógica principal do pedido.
+
 class EstrategiaFrete {
   calcular() {
     throw new Error('Metodo calcular(peso) deve ser implementado');

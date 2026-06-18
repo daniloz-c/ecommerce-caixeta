@@ -1,3 +1,7 @@
+// Permite notificar automaticamente outras partes do sistema quando o status do pedido muda. 
+// Por exemplo, quando o pedido é confirmado, enviado ou entregue, o sistema pode disparar e-mail, 
+// notificação ou registrar logs sem acoplar isso diretamente ao pedido.
+
 class Observer {
   atualizar() {
     throw new Error('Metodo atualizar(pedido) deve ser implementado');

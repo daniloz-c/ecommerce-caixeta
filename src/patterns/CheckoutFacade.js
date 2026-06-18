@@ -1,3 +1,7 @@
+// Simplifica o fluxo de checkout. Em vez de o controller chamar várias classes separadas, 
+// como pedido, pagamento, frete, estoque e notificação, 
+// ele chama uma única fachada, por exemplo CheckoutFacade, que organiza todo o processo.
+
 const EstoqueService = require('../services/EstoqueService');
 const PagamentoService = require('../services/PagamentoService');
 const CarrinhoService = require('../services/CarrinhoService');

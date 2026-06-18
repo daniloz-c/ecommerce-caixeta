@@ -1,3 +1,7 @@
+// Permite adicionar comportamentos extras sem modificar a classe principal. 
+// Por exemplo, pode ser usado para adicionar taxa extra, desconto, embalagem para presente, 
+// cupom ou validações adicionais em um pedido ou pagamento
+
 const { Pagamento } = require('./PagamentoFactory');
 
 class PagamentoDecorator extends Pagamento {

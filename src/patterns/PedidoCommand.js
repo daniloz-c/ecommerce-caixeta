@@ -1,3 +1,6 @@
+// Encapsula ações importantes da API como comandos, por exemplo: criar pedido, cancelar pedido, processar pagamento ou alterar status. 
+// Isso facilita organizar operações, registrar histórico, reaproveitar ações e até implementar filas ou desfazer operações no futuro.
+
 class Comando {
   executar() {
     throw new Error('Metodo executar() deve ser implementado');

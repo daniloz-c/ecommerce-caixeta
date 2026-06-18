@@ -1,3 +1,7 @@
+//Facilita a criação de pedidos completos, pois um pedido precisa ter itens, 
+// endereço, forma de pagamento, status inicial e pagamento vinculado. 
+// O Builder permite montar esse objeto passo a passo, validando as regras antes de finalizar a criação.
+
 const Pedido = require('../models/Pedido');
 const ItemPedido = require('../models/ItemPedido');
 const Pagamento = require('../models/Pagamento');
